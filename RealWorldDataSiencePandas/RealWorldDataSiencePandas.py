@@ -45,12 +45,20 @@ info_rows = info_box.find_all("tr")
 
 
 
-## Helper Method - to get names in td --> li
+
+
+
+## Add it to Dictionary -- Helper Method - to get multiple names in tr --> li´s -------->
 def get_content_value(row_data): # Get the row
     if row_data.find("li"): # if li in the row
-        return [li.get_text() for li in row_data.find_all("li")] # Get the data in all li´s as txt. Used for td where there is li's with multiple data like Writers: name1, name2 etc. etc.
+        return [li.get_text(" ", strip=True).replace("\xa0", " ") for li in row_data.find_all("li")] # Get the data in all li´s as txt. Used for td where there is li's with multiple data like Writers: name1, name2 etc. etc.
     else:
-        return row_data.get_text()# Else get the data as txt
+        return row_data.get_text(" ", strip=True).replace("\xa0", " ") # Else get the data as txt and replace "\xa0" with space
+
+
+
+
+
 
 
 
@@ -60,11 +68,11 @@ movie_info = {} # Dictionary
 
 for index, row in enumerate(info_rows): #info_rows = all <tr> elements
     if index == 0: # if index == 0 = title
-        movie_info['title'] = row.find("th").get_text() # Get the Title
+        movie_info['title'] = row.find("th").get_text(" ", strip=True) # Get the Title
     elif index == 1:
         continue
     else:
-        content_key = row.find("th").get_text() # Get the TableHead -  ex. Country, Language ..etc.
+        content_key = row.find("th").get_text(" ", strip=True) # Get the TableHead -  ex. Country, Language ..etc.
         content_value = get_content_value(row.find("td")) # Get the Value of every TableHead - ex. USA, English.. etc.
         movie_info[content_key] = content_value # Add the <th> and the <td> to the dictionary - headers and values
 
