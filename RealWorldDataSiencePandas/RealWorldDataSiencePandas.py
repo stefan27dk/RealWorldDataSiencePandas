@@ -7,6 +7,9 @@ from bs4 import BeautifulSoup as bs
 
 # Requests -------- For sending requests and getting the http responses for the webpages Html
 import requests
+
+#Return all non-overlapping matches of pattern in string, as a list of strings
+import re
 ############################ END Imports #########################################
 
 
@@ -92,17 +95,62 @@ for index, row in enumerate(info_rows): #info_rows = all <tr> elements
 
 
 ## Get all Movies ############################## ::START:: ########################################
-
-
 ## 2.1 - Make request and get the html
 r_movies = requests.get("https://en.wikipedia.org/wiki/List_of_Walt_Disney_Pictures_films")
 
-
-## 2.2 - Convert to beautiful soup object -------------------------------------------------->
-movies_soup = bs(r_movies.content, features="html.parser") # The whole Html content
  
+###########################################################################################
+## 2.2 - Convert to beautiful soup object -------------------------------------------------->
+movies_soup = bs(r_movies.content) # The whole Html content
+ 
+#movies_contents = movies_soup.prettify()
+#print(movies_contents)
 
-# Get all tables with the movies
-movies_tables = movies_soup.find_all(class_ = "wikitable sortable jquery-tablesorter") 
 
-print(movies_tables)
+###########################################################################################
+## 2.3 - Get all tables with the movies
+movies_tables = movies_soup.select(".wikitable.sortable") # Get the tables by classes
+
+
+# Links List
+raw_movies_links = "" 
+ 
+# Domain
+domain = "https://en.wikipedia.org/wiki"
+
+# Get all movies links
+for table in movies_tables: 
+    if table.find_all("i"): 
+        raw_movies_links += str(table.find_all("i")) # All Raw links to string holder
+ 
+#print(raw_movies_links) # Show links
+
+
+
+ # Clean links list
+filtered_movies_links = re.findall("href=[\"\'](.*?)[\"\']", raw_movies_links)
+print(filtered_movies_links)
+
+
+
+     
+###########################################################################################
+
+
+## 2.4 - Get the links of the movies
+
+
+
+
+
+# -----------------TEST---------------------------------------------
+#raw_movies_tbodys = movies_soup.find(class_="wikitable sortable jquery-tablesorter") 
+
+ 
+## Tables
+#movies_tbodys = raw_movies_tbodys.find_all("tbody")
+
+#for table in movies_tbodys:
+#    print(table.prettify())
+
+ 
