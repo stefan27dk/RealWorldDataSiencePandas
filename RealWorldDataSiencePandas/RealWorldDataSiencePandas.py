@@ -17,11 +17,11 @@ import requests
 
 
 ############################ ::START - Code:: #####################################
-## Get html code
+## 1 - Get html code
 r = requests.get("https://en.wikipedia.org/wiki/Toy_Story_3") 
 
 
-# Convert to beautiful soup object -------------------------------------------------->
+## 2 - Convert to beautiful soup object -------------------------------------------------->
 soup = bs(r.content)
  
 ## Print html
@@ -33,7 +33,7 @@ soup = bs(r.content)
 
 
 
-## Get the table infobox vevent by classes from the html------------------------------>
+## 3 - Get the table infobox vevent by classes from the html------------------------------>
 info_box = soup.find(class_="infobox vevent")
 #print(info_box.prettify()) # Pritnt the info table html
 
@@ -48,7 +48,7 @@ info_rows = info_box.find_all("tr")
 
 
 
-## Add it to Dictionary -- Helper Method - to get multiple names in tr --> li´s -------->
+## 4 - Add it to Dictionary -- Helper Method - to get multiple names in tr --> li´s -------->
 def get_content_value(row_data): # Get the row
     if row_data.find("li"): # if li in the row
         return [li.get_text(" ", strip=True).replace("\xa0", " ") for li in row_data.find_all("li")] # Get the data in all li´s as txt. Used for td where there is li's with multiple data like Writers: name1, name2 etc. etc.
@@ -62,7 +62,7 @@ def get_content_value(row_data): # Get the row
 
 
 
-## Add it to Dictionary ---------------------------------------------------------------->
+## 5 - Add it to Dictionary ---------------------------------------------------------------->
 
 movie_info = {} # Dictionary
 
@@ -77,7 +77,7 @@ for index, row in enumerate(info_rows): #info_rows = all <tr> elements
         movie_info[content_key] = content_value # Add the <th> and the <td> to the dictionary - headers and values
 
  
-print(movie_info) # Check the autput 
+#print(movie_info) # Check the autput 
 
 
 
@@ -85,3 +85,24 @@ print(movie_info) # Check the autput
 
 
 
+
+
+
+
+
+
+## Get all Movies ############################## ::START:: ########################################
+
+
+## 2.1 - Make request and get the html
+r_movies = requests.get("https://en.wikipedia.org/wiki/List_of_Walt_Disney_Pictures_films")
+
+
+## 2.2 - Convert to beautiful soup object -------------------------------------------------->
+movies_soup = bs(r_movies.content, features="html.parser") # The whole Html content
+ 
+
+# Get all tables with the movies
+movies_tables = movies_soup.find_all(class_ = "wikitable sortable jquery-tablesorter") 
+
+print(movies_tables)
