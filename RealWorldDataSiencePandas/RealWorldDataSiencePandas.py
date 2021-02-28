@@ -94,63 +94,47 @@ for index, row in enumerate(info_rows): #info_rows = all <tr> elements
 
 
 
-## Get all Movies ############################## ::START:: ########################################
+################################ ::START - Get all Movies::  ########################################
 ## 2.1 - Make request and get the html
 r_movies = requests.get("https://en.wikipedia.org/wiki/List_of_Walt_Disney_Pictures_films")
 
  
-###########################################################################################
-## 2.2 - Convert to beautiful soup object -------------------------------------------------->
+############################### 2.2 - Convert to beautiful soup object ###############################
 movies_soup = bs(r_movies.content) # The whole Html content
- 
 #movies_contents = movies_soup.prettify()
 #print(movies_contents)
 
 
-###########################################################################################
-## 2.3 - Get all tables with the movies
+############################### 2.3 - Get all tables with the movies ################################# 
 movies_tables = movies_soup.select(".wikitable.sortable") # Get the tables by classes
 
 
-# Links List
-raw_movies_links = "" 
- 
-# Domain
-domain = "https://en.wikipedia.org/wiki"
 
-# Get all movies links
-for table in movies_tables: 
-    if table.find_all("i"): 
-        raw_movies_links += str(table.find_all("i")) # All Raw links to string holder
- 
+############################### 2.4 - Get all movies RawLinks and make them Sublinks ################# 
+# Raw Links
+raw_movies_links = "" 
+  
+for table in movies_tables:
+    raw_movies_links += str(table.find_all("i"))  # All Raw links to string holder
+   
 #print(raw_movies_links) # Show links
 
 
 
- # Clean links list
-filtered_movies_links = re.findall("href=[\"\'](.*?)[\"\']", raw_movies_links)
-print(filtered_movies_links)
+############################### 2.5 - Filter the sub_links #############################################
+filtered_movies_sub_links = re.findall("href=[\"\'](.*?)[\"\']", raw_movies_links)
+
+#print(filtered_movies_sub_links)
 
 
 
-     
-###########################################################################################
+############################### 2.6 - Assamble the links ################################################  
+# Domain
+domain = "https://en.wikipedia.org"
 
 
-## 2.4 - Get the links of the movies
-
-
-
-
-
-# -----------------TEST---------------------------------------------
-#raw_movies_tbodys = movies_soup.find(class_="wikitable sortable jquery-tablesorter") 
-
- 
-## Tables
-#movies_tbodys = raw_movies_tbodys.find_all("tbody")
-
-#for table in movies_tbodys:
-#    print(table.prettify())
-
+clean_movie_links = []
+for sub_links in filtered_movies_sub_links:
+    clean_movie_links.append(domain + sub_links) # Assamble the domain with the sublink
+#print(clean_movie_links)
  
